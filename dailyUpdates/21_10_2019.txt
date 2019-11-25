@@ -1,0 +1,56 @@
+Monday 21/10/2019
+
+Began work with astropy, a python library aimed at astrophysics and image processing. 
+
+Using this library I reproduces some of my FITS files. 
+
+I also began work looking into the correct process in which to reduce my image using the bias, dark and flats. 
+
+The corrected image can be expressed as; Raw - ((Dark + Bias)/Flat)
+
+I have been unable to produce a combined image yet. I am getting th efollowing error when I try concatenate the images together.
+TypeError: stat: path should be string, bytes, os.PathLike or integer, not method
+
+My code is currently one test file as shown here.
+
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct 21 15:05:06 2019
+
+@author: bguilfoyle - bengfoyle.github.io
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.io import fits
+import astropy.units as u
+from astropy.nddata import CCDData
+
+#def averageImage(path,file,)
+
+#path = "C:/Users/bguilfoyle/Documents/CompPhysics/FYP/data/seyfertImages"
+#image_file = path + "raw/Stephan-0001V.fit"
+#hdu_list = fits.open(image_file)
+#hdu_list.info()
+#
+#image_data = fits.getdata(image_file)
+#plt.imshow(image_data, cmap='gray')
+#plt.colorbar()
+#imageListR = [path + "raw/Stephan-0001R.fit",path + "raw/Stephan-0002R.fit",path + "raw/Stephan-0003R.fit"]
+imageNameList = []
+imageList = []
+for i in ["1","2","3"]:
+    for j in ["H","R","SII","V"]:
+        imageNameList.append("Stephan-000" + i + j + ".fit")
+
+imageConcat = []
+for i in range(0,len(imageNameList)):
+    imageList.append(fits.open(imageNameList[i]))
+
+imageConcat = [fits.getdata(image) for image in imageList]
+finalImage = np.zeros(shape=imageConcat[0].shape)
+
+for image in imageConcat:
+    finalImage += image
+    
+plt.imshow(finalImage, cmap='gray')
+plt.colorbar()
